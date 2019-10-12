@@ -1,13 +1,20 @@
 package com.senpi.david.dubhacks2019;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.VideoView;
+
+import com.arvisapps.practiceapp.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,24 +25,26 @@ import java.util.Date;
  * Created by david on 10/12/2019.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity implements View.OnClickListener {
     String currentPhotoPath;
     static final int REQUEST_VIDEO_CAPTURE = 1;
-
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        private Button mButton;
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//
+//        mButton = findViewById(R.id.dispatchVideo);
+//        mButton.setOnClickListener(this);
     }
 
-    /** Called when the user taps the Send button */
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        TextView editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId()) {
+//            case R.id.button_send:
+                // Do something
+        }
     }
 
     private void dispatchTakeVideoIntent() {
@@ -44,21 +53,14 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Uri videoUri = intent.getData();
+            Context context = getApplicationContext();
+            VideoView view = new VideoView(context);
+            view.setVideoURI(videoUri);
+        }
     }
+
 }
